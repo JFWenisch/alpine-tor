@@ -4,13 +4,13 @@ Alpine based [Tor](https://www.torproject.org/) docker container building [Tor](
 ## Build docker image
 
 ```
-docker build -t jfwenisch/tor-docker .
+docker build -t jfwenisch/alpine-tor-docker .
 ```
 
 ## Run container
 
 ```
-docker run -p 9050:9050 jfwenisch/tor-docker
+docker run -p 9050:9050 jfwenisch/alpine-tor-docker
 ```
 
 ## Testing socks5 proxy
