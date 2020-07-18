@@ -1,19 +1,19 @@
 # tor-docker
 Alpine based [Tor](https://www.torproject.org/) docker container
 
-# Build docker image
+## Build docker image
 
 ```
 docker build -t jfwenisch/tor-docker .
 ```
 
-# Run container
+## Run container
 
 ```
 docker run -p 9050:9050 jfwenisch/tor-docker
 ```
 
-# Testing socks5 proxy
+## Testing socks5 proxy
 
 Start by getting your real external ip
 ```
