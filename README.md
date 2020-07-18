@@ -2,12 +2,12 @@
 Alpine based [Tor](https://www.torproject.org/) docker container building [Tor](https://www.torproject.org/) from src and exposing Socks5 Port per default when running.
 
 ## Installation
-## Pull docker image from dockerhub
+### Pull docker image from dockerhub
 
 ```
 docker pull jfwenisch/alpine-tor
 ```
-## Build docker image manually
+### Build docker image manually
 
 ```
 git pull https://github.com/JFWenisch/alpine-tor-docker.git
