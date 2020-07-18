@@ -1,5 +1,5 @@
 # tor-docker
-Alpine based [Tor](https://www.torproject.org/) docker container
+Alpine based [Tor](https://www.torproject.org/) docker container building [Tor](https://www.torproject.org/) from src and exposing Socks5 Port per default when running.
 
 ## Build docker image
 
