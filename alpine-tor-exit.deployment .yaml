@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: alpine-tor-service
+  name: alpine-tor-exit-service
   labels:
-    deploy: alpine-tor
+    deploy: alpine-tor-exit
 spec:
   type: NodePort 
   ports:
@@ -12,25 +12,25 @@ spec:
     protocol: TCP
     name: DirServicePort
   selector:
-    deploy: alpine-tor
+    deploy: alpine-tor-exit
 ---
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: alpine-tor
+  name: alpine-tor-exit
 spec:
   replicas: 1
   selector:
     matchLabels:
-      deploy: alpine-tor
+      deploy: alpine-tor-exit
   template:
     metadata:
       labels:
-        deploy: alpine-tor
+        deploy: alpine-tor-exit
     spec:
       containers:
         - name: alpine-tor-exit
           image: jfwenisch/alpine-tor
           env:
-            name:mode
-            value:"exit"
+          - name: mode
+            value: exit

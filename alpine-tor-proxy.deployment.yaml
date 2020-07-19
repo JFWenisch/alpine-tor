@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: alpine-tor-service
+  name: alpine-tor-proxy-service
   labels:
-    deploy: alpine-tor
+    deploy: alpine-tor-proxy
 spec:
   type: NodePort 
   ports:
@@ -12,25 +12,25 @@ spec:
     protocol: TCP
     name: socks5
   selector:
-    deploy: alpine-tor
+    deploy: alpine-tor-proxy
 ---
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: alpine-tor
+  name: alpine-tor-proxy
 spec:
   replicas: 1
   selector:
     matchLabels:
-      deploy: alpine-tor
+      deploy: alpine-tor-proxy
   template:
     metadata:
       labels:
-        deploy: alpine-tor
+        deploy: alpine-tor-proxy
     spec:
       containers:
         - name: alpine-tor-proxy
           image: jfwenisch/alpine-tor
           env:
-            name:mode
-            value:"proxy"
+          - name: mode
+            value: proxy
