@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: alpine-tor-service
+  labels:
+    deploy: alpine-tor
+spec:
+  type: NodePort 
+  ports:
+  - port: 443
+    targetPort: 443
+    protocol: TCP
+    name: ORPort
+  selector:
+    deploy: alpine-tor
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: alpine-tor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deploy: alpine-tor
+  template:
+    metadata:
+      labels:
+        deploy: alpine-tor
+    spec:
+      containers:
+        - name: alpine-tor-middle
+          image: jfwenisch/alpine-tor
+          env:
+            name:mode
+            value:"middle"
