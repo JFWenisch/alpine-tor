@@ -38,7 +38,8 @@ service:
   tororport:  443
   torsocksport: 9050
   torcontactinfo: "J.-Fabian Wenisch <info AT jfwenisch dot com>"
-  tornickname:  "jfwenisch-alpine-tor"
+  tornickname:  "AlpineTor"
+
 
 #If set to true, the same ports that are specified as tordirport,tororport and torsocksport  will be used as nodeport
 #Warning: If set to true, the specified ports have to be within the kubernetes nodePort rang (default 30000 - 32767)
