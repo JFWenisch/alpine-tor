@@ -31,7 +31,7 @@ docker build -t jfwenisch/alpine-tor .
 
   
 
-## Run container
+## Run container 
 
 The alpine-tor container can be started in 4 different modes which can be set via the "mode" environment variable.
 Dependent on the chosen node, different ports needs to be opened which are noted in the related section
@@ -51,7 +51,7 @@ docker run -e mode=${mode} jfwenisch/alpine-tor
   Bridges are useful for Tor users under oppressive regimes or for people who want an extra layer of security because they're worried somebody will recognize that they are contacting a public Tor relay IP address. Several countries, including China and Iran, have found ways to detect and block connections to Tor bridges. Pluggable transports ([​https://www.torproject.org/docs/pluggable-transports.html.en](https://www.torproject.org/docs/pluggable-transports.html.en)), a special kind of bridge, address this by adding an additional layer of obfuscation.
 
         
-        docker run -e mode=bridge -p 443:443 jfwenisch/alpine-tor
+        docker run -e mode=bridge -e ORPort=443 -p 443:443 jfwenisch/alpine-tor
    
     
 
@@ -63,7 +63,7 @@ docker run -e mode=${mode} jfwenisch/alpine-tor
   A non-exit Tor relay requires minimal maintenance efforts and bandwidth usage can be highly customized in the tor configuration (will be covered in more detail later in this guide). The so called "exit policy" of the relay decides if it is a relay allowing clients to exit or not. A non-exit relay does not allow exiting in its exit policy.
 
         
-        docker run -e mode=middle-p 443:443 jfwenisch/alpine-tor
+        docker run -e mode=middle -e ORPort=443 -p 443:443 jfwenisch/alpine-tor
        
 
  * **Exit**
@@ -77,7 +77,7 @@ docker run -e mode=${mode} jfwenisch/alpine-tor
   
 
         
-        docker run -e mode=exit -p 80:80 jfwenisch/alpine-tor
+        docker run -e mode=exit  -e DirPort=80 -p 80:80 jfwenisch/alpine-tor
 
  * **Proxy**
   The node will neither run as exit, bridge or middle and will just connect as client for the usage as proxy
@@ -88,15 +88,21 @@ docker run -e mode=${mode} jfwenisch/alpine-tor
   
 
         
-        docker run -e mode=proxy -p 9050:9050 jfwenisch/alpine-tor
+        docker run -e mode=proxy -e SocksPort=9050 -p 9050:9050 jfwenisch/alpine-tor
        
 
 
   
 
 
+## Helm deployment
 
+Test deployment with
 
+```
+helm install --dry-run --debug --generate-name ./chart
+
+```
   
 
 ## Kubernetes deployment
