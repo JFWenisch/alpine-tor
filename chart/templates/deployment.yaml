@@ -38,7 +38,7 @@ spec:
               value: {{ .Values.service.torsocksport | quote}}
             - name: ContactInfo
               value: {{ .Values.service.torcontactinfo | quote}}
-            name: Nickname
+            - name: Nickname
               value: {{ .Values.service.tornickname | quote}}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
