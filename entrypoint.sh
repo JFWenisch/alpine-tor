@@ -4,6 +4,8 @@ echo -e "Alpine Version: \c" && cat /etc/alpine-release
 echo -e "Tor Version: \c" && tor --version
 echo -e "OBFS4Proxy Version: \c" && obfs4proxy -version
 echo "Searching for environment variable 'mode'"
+echo "ContactInfo $ContactInfo" >> /etc/tor/torrc
+echo "Nickname $Nickname" >> /etc/tor/torrc
 if [ "$mode" = "exit" ]
 then
    echo "Starting up as exit node"

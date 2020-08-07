@@ -31,11 +31,15 @@ spec:
             - name: mode
               value: {{ .Values.mode }}
             - name: DirPort
-              value: {{ .Values.service.tordirport }}
+              value: {{ .Values.service.tordirport | quote}}
             - name: ORPort
-              value: {{ .Values.service.tororport }}
+              value: {{ .Values.service.tororport | quote}}
             - name: SOCKSPort
-              value: {{ .Values.service.torsocksport }}
+              value: {{ .Values.service.torsocksport | quote}}
+            - name: ContactInfo
+              value: {{ .Values.service.torcontactinfo | quote}}
+            name: Nickname
+              value: {{ .Values.service.tornickname | quote}}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

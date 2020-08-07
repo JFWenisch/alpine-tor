@@ -103,6 +103,43 @@ Test deployment with
 helm install --dry-run --debug --generate-name ./chart
 
 ```
+
+### Defining the mode
+In reference to the different modes these can be set via --set mode=$value. If no mode is specified the default value "mode:proxy" will be used.
+
+```
+helm install --dry-run --debug --generate-name --set mode=bridge ./chart
+
+```
+
+### Defining ports
+Based on the chosen mode, different ports are set within the torrc. Which options are set can be viewed within the entrypoint sh. Per default port 80 is set as DirPort. port 443 is set as ORPort and Port 9050 is set as socksport. These values can be overwritten as
+
+```
+helm install --dry-run --debug --generate-name --set mode=exit --set service.tordirport=8080 ./chart
+helm install --dry-run --debug --generate-name --set mode=middle --set service.tororport=4443 ./chart
+helm install --dry-run --debug --generate-name --set mode=bridge --set service.tororport=4443 ./chart
+helm install --dry-run --debug --generate-name --set mode=proxy --set service.torsocksport=10050 ./chart
+
+```
+### Exposing ports as NodePort
+Per default the service makes the set ports available via nodePorts and automatically assigns a port within the kubernetes nodePort rang (default 30000 - 32767). As tor is making a self check on the set ports and no router is in front of the kubernetes node which might be used to map to the automatically assigned nodePort, fixed values for the nodeport can be set by specifying '--set samenodeport=true'. If set to true, the same ports that are specified as tordirport,tororport and torsocksport  will be used as nodeport.
+
+Warning: If set to true, the specified ports have to be within the kubernetes nodePort rang (default 30000 - 32767)
+
+```
+helm install --dry-run --debug --generate-name --set mode=mide --set samenodeport=true --set service.torsocksport=30050 --set service.tororport=30443 --set service.tordirport=30080 ./chart
+
+```
+
+### Additional configuration
+
+
+```
+--set service.torcontactinfo="J.-Fabian Wenisch <info AT jfwenisch dot com>" 
+--set service.tornickname="alpine-tor" 
+```
+
   
 
 ## Kubernetes deployment

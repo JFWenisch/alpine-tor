@@ -35,6 +35,7 @@ RUN rm -rf /var/cache/apk/*
 #Init
 EXPOSE 9050
 COPY torrc /etc/tor/torrc
+
 COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT [ "/bin/sh" ]
 CMD [ "entrypoint.sh" ]

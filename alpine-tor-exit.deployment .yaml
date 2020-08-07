@@ -10,7 +10,7 @@ spec:
   - port: 80
     targetPort: 80
     protocol: TCP
-    name: DirServicePort
+    name: dirservicePort
   selector:
     deploy: alpine-tor-exit
 ---

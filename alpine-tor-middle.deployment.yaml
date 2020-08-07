@@ -10,7 +10,7 @@ spec:
   - port: 443
     targetPort: 443
     protocol: TCP
-    name: ORPort
+    name: orPort
   selector:
     deploy: alpine-tor-middle
 ---

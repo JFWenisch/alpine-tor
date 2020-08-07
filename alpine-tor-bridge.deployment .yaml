@@ -10,7 +10,7 @@ spec:
   - port: 443
     targetPort: 443
     protocol: TCP
-    name: ORPort
+    name: orport
   selector:
     deploy: alpine-tor-bridge
 ---
@@ -31,7 +31,6 @@ spec:
       containers:
         - name: alpine-tor-bridge
           image: jfwenisch/alpine-tor
-          env:
           env:
           - name: mode
             value: bridge
