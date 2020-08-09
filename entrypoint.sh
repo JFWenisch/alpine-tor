@@ -10,19 +10,19 @@ if [ "$mode" = "exit" ]
 then
    echo "Starting up as exit node"
    echo "ExitRelay 1" >> /etc/tor/torrc
-   echo "DirPort $DirPort" >> /etc/tor/torrc
+   echo "DirPort 0.0.0.0:$DirPort" >> /etc/tor/torrc
    echo "DirPortFrontPage /path/to/html/file" >> /etc/tor/torrc
 elif [ "$mode" = "middle" ]
 then
    echo "Starting up as middle / guard node"
-   echo "ORPort $ORPort" >> /etc/tor/torrc
+   echo "ORPort 0.0.0.0:$ORPort" >> /etc/tor/torrc
    echo "ExitRelay 0" >> /etc/tor/torrc
    echo "SocksPort 0" >> /etc/tor/torrc
    echo "ControlSocket 0" >> /etc/tor/torrc
 elif [ "$mode" = "bridge" ]
 then
   echo "Starting up as bridge node"
-  echo "ORPort $ORPort" >> /etc/tor/torrc
+  echo "ORPort 0.0.0.0:$ORPort" >> /etc/tor/torrc
   echo "BridgeRelay 1" >> /etc/tor/torrc
   echo "ServerTransportPlugin obfs4 exec /usr/local/bin/obfs4proxy" >> /etc/tor/torrc
   echo "ExtORPort auto" >> /etc/tor/torrc
