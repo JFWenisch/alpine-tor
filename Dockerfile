@@ -46,10 +46,12 @@ COPY torrc /etc/tor/torrc
 COPY entrypoint.sh /entrypoint.sh
 #Permission for tor-user
 RUN chown -R toruser /etc/tor/torrc
-RUN chown -R toruser /tor
 RUN chmod +x /entrypoint.sh
+RUN mkdir -p /tor
+RUN chown -R toruser /tor
+
 
 # Tell docker that all future commands should run as the appuser user
 USER toruser
-RUN mkdir -p /tor
+
 ENTRYPOINT [ "/bin/sh" , "entrypoint.sh" ]

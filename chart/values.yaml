@@ -9,6 +9,7 @@ image:
   pullPolicy: Always
 
 mode: proxy
+mountpath: /tmp
 
 imagePullSecrets: []
 nameOverride: ""

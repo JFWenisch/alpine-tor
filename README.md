@@ -104,11 +104,24 @@ helm install --dry-run --debug --generate-name ./chart
 
 ```
 
+## Quickstart
+```
+helm install alpine-tor-middle --set mode=middle --set samenodeport=true --set service.torsocksport="30050" --set service.tororport="30051" --set service.tordirport="30052" --set mountpath=/tmp ./chart
+```
+
 ### Defining the mode
 In reference to the different modes these can be set via --set mode=$value. If no mode is specified the default value "mode:proxy" will be used.
 
 ```
 helm install --dry-run --debug --generate-name --set mode=bridge ./chart
+
+```
+
+### Persistence / Defining mountpath
+The chart inherits a 100M volume and volumeclaim that enables persistence via a local mountpath. The mountpath is per default set to /tmp an can be overriden by using --set mountpath=/mnt/...
+
+```
+helm install --dry-run --debug --generate-name --set mode=bridge -set mountpath=/media/raid/kubernetes/torvolume1 ./chart
 
 ```
 
