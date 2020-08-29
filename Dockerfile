@@ -26,7 +26,7 @@ RUN apk --no-cache add --update \
 #Add obfs4proxy for usage as bridge
 RUN apk add --no-cache obfs4proxy=0.0.11-r2   --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing
 # Create a group and user
-RUN addgroup -S torusergrp && adduser -S toruser -G torusergrp
+#RUN addgroup -S torusergrp && adduser -S toruser -G torusergrp
 
 
 #Build
@@ -45,13 +45,13 @@ COPY torrc /etc/tor/torrc
 
 COPY entrypoint.sh /entrypoint.sh
 #Permission for tor-user
-RUN chown -R toruser /etc/tor/torrc
+#RUN chown -R toruser /etc/tor/torrc
 RUN chmod +x /entrypoint.sh
-RUN mkdir -p /tor
-RUN chown -R toruser /tor
+#RUN mkdir /tor
+#RUN chown -R toruser /tor
 
 
 # Tell docker that all future commands should run as the appuser user
-USER toruser
+#USER toruser
 
 ENTRYPOINT [ "/bin/sh" , "entrypoint.sh" ]
