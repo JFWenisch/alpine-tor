@@ -47,6 +47,16 @@ spec:
               value: {{ .Values.service.torcontactinfo | quote}}
             - name: Nickname
               value: {{ .Values.service.tornickname | quote}}
+            - name: DNSPort
+              value: {{ .Values.service.tordnsport | quote}}
+            - name: DNSListenAddress
+              value: {{ .Values.service.tordnslistenaddress | quote}}
+            - name: MyFamily
+              value: {{ .Values.service.tormyfamily | quote}}
+            - name: HiddenServiceDir
+              value: {{ .Values.service.torhiddenservicedir | quote}}
+            - name: HiddenServicePort
+              value: {{ .Values.service.torhiddenserviceport | quote}}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

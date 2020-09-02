@@ -40,6 +40,11 @@ service:
   torsocksport: 9050
   torcontactinfo: "J.-Fabian Wenisch <info AT jfwenisch dot com>"
   tornickname:  "AlpineTor"
+  tordnsport:
+  tordnslistenaddress:
+  tormyfamily:
+  torhiddenservicedir:
+  torhiddenserviceport:
 
 
 #If set to true, the same ports that are specified as tordirport,tororport and torsocksport  will be used as nodeport

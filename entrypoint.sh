@@ -6,6 +6,8 @@ echo -e "OBFS4Proxy Version: \c" && obfs4proxy -version
 echo "Searching for environment variable 'mode'"
 echo "ContactInfo $ContactInfo" >> /etc/tor/torrc
 echo "Nickname $Nickname" >> /etc/tor/torrc
+
+#Set required values depending on set mode
 if [ "$mode" = "exit" ]
 then
    echo "Starting up as exit node"
@@ -34,5 +36,23 @@ else
    echo "No mode set. Please refer to the Readme.md on how to run. Exiting."
    exit;
 fi
+#Additional optional values
+if [ -n "$DNSPort" ]; then
+  echo "DNSPort $DNSPort" >> /etc/tor/torrc
+fi
+if [ -n "$DNSListenAddress" ]; then
+  echo "DNSListenAddress $DNSListenAddress" >> /etc/tor/torrc
+fi
+if [ -n "$MyFamily" ]; then
+  echo "MyFamily $MyFamily" >> /etc/tor/torrc
+fi
+if [ -n "$HiddenServiceDir" ]; then
+  echo "HiddenServiceDir $HiddenServiceDir" >> /etc/tor/torrc
+fi
+if [ -n "$HiddenServicePort" ]; then
+  echo "HiddenServicePort $HiddenServicePort" >> /etc/tor/torrc
+fi
+
+#Startup
 echo "Running tor -f /etc/tor/torrc"
 tor -f /etc/tor/torrc

@@ -28,6 +28,15 @@ spec:
    {{- end }}
       protocol: TCP
       name: socks5port
+      {{- if .Values.service.torhiddenserviceport }}
+    - port: {{ (split " " .Values.service.torhiddenserviceport)._0 }}
+      targetPort: {{ (split " " .Values.service.torhiddenserviceport)._0 }}
+         {{- if .Values.samenodeport }}
+      nodePort: {{ (split " " .Values.service.torhiddenserviceport)._0 }}
+         {{- end }}
+      protocol: TCP
+      name: socks5port
+         {{- end }}
   
   selector:
     {{- include "alpine-tor.selectorLabels" . | nindent 4 }}

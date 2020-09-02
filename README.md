@@ -151,6 +151,11 @@ helm install --dry-run --debug --generate-name --set mode=mide --set samenodepor
 ```
 --set service.torcontactinfo="J.-Fabian Wenisch <info AT jfwenisch dot com>" 
 --set service.tornickname="alpine-tor" 
+--set service.tordnsport=""
+--set service.tordnslistenaddress=""
+--set service.tormyfamily=""
+--set service.torhiddenservicedir=""
+--set service.torhiddenserviceport=""
 ```
 
   
