@@ -58,6 +58,7 @@ version_tag:
   - apt update
   - apt install --no-install-recommends -y git
   - git fetch --tags
+  script:
   - echo "RELEASE_URL=https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/jobs/$CI_JOB_ID/artifacts/release" > build_info
   - echo "RELEASE_DESC=\"$(uname -mo) binary\"" >> build_info
   - echo "RELEASE_SHA=$CI_COMMIT_SHA" >> build_info
