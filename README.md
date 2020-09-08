@@ -151,11 +151,11 @@ helm install --dry-run --debug --generate-name --set mode=mide --set samenodepor
 ```
 --set service.torcontactinfo="J.-Fabian Wenisch <info AT jfwenisch dot com>" 
 --set service.tornickname="alpine-tor" 
---set service.tordnsport=""
---set service.tordnslistenaddress=""
+--set service.tordnsport="53"
+--set service.tordnslistenaddress="127.0.0.1"
 --set service.tormyfamily=""
---set service.torhiddenservicedir=""
---set service.torhiddenserviceport=""
+--set service.torhiddenservicedir="/usr/local/etc/tor/hidden_service/"
+--set service.torhiddenserviceport="80 127.0.0.1:8080"
 ```
 
   
