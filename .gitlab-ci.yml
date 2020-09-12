@@ -46,10 +46,10 @@ build_docker:
     docker build --pull
     --tag $DOCKERHUB_REGISTRY_IMAGE:$RELEASE_VERSION
     --cache-from $DOCKERHUB_REGISTRY_IMAGE:latest .
-  - docker push $DOCKERHUB_REGISTRY_IMAGE:$RELEASE_VERSION-tor$TOR_VERSION 
+  - docker push $DOCKERHUB_REGISTRY_IMAGE:$RELEASE_VERSION+$TOR_VERSION
   - >
     if [ "$CI_COMMIT_REF_SLUG" == "master" ]; then
-      docker tag $DOCKERHUB_REGISTRY_IMAGE:$RELEASE_VERSION-$TOR_VERSION  $DOCKERHUB_REGISTRY_IMAGE:latest
+      docker tag $DOCKERHUB_REGISTRY_IMAGE:$RELEASE_VERSION+$TOR_VERSION  $DOCKERHUB_REGISTRY_IMAGE:latest
       docker push $DOCKERHUB_REGISTRY_IMAGE:latest
     fi
   except:
@@ -74,7 +74,7 @@ version_tag:
   - echo -n "update version information v$RELEASE_VERSION ..."
   - release changelog
   - release commit-and-tag CHANGELOG.md release_info
-  - release --ci-commit-tag v$RELEASE_VERSION-$TOR_VERSION add-download-link --name release --url $RELEASE_URL --description "$RELEASE_DESC"
+  - release --ci-commit-tag v$RELEASE_VERSION+$TOR_VERSION add-download-link --name release --url $RELEASE_URL --description "$RELEASE_DESC"
   except:
     - tags
  
