@@ -2,6 +2,14 @@
 
 <!--- next entry here -->
 
+## 0.0.5
+2020-09-12
+
+### Fixes
+
+- version (af79f540a06156fdecd943f89fd58e40a0b9fc97)
+- version (3f182fdc8a4a18208e65f5a1ae9d1ec0304ec62c)
+
 ## 0.0.4
 2020-09-12
 
