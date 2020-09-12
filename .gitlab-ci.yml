@@ -19,10 +19,14 @@ version:
   - git fetch --tags
   script:
     - release --bump-patch next-version > .next-version
+    - export TOR_VERSION=$(git ls-remote --tags --sort="v:refname" https://git.torproject.org/tor.git | grep -v 'rc'| grep -v 'alpha'| grep -v 'dev'| tail -n1| sed  's/.*\///; s/\^{}//')
+    - $TOR_VERSION > .tor-version
     - cat .next-version
+    - cat .tor-version
   artifacts:
     paths:
     - .next-version
+    - .tor-version
   except:
     - tags
 
@@ -34,12 +38,9 @@ build_docker:
     policy: pull
   services:
   - docker:19.03.5-dind 
-  before_script:
-  - apt update
-  - apt install --no-install-recommends -y git
   script:
   - export RELEASE_VERSION=$(cat .next-version)
-  - export TOR_VERSION=$(git ls-remote --tags --sort="v:refname" https://git.torproject.org/tor.git | grep -v 'rc'| grep -v 'alpha'| grep -v 'dev'| tail -n1| sed  's/.*\///; s/\^{}//')
+  - export TOR_VERSION=$(cat .tor-version)
   - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASSWORD $DOCKERHUB_REGISTRY
   - docker pull $DOCKERHUB_REGISTRY_IMAGE:latest || true
   - >
@@ -67,7 +68,7 @@ version_tag:
   - echo "RELEASE_DESC=\"$(uname -mo) binary\"" >> build_info
   - echo "RELEASE_SHA=$CI_COMMIT_SHA" >> build_info
   - echo "RELEASE_VERSION=$(<.next-version)" >> build_info
-  - echo "TOR_VERSION=$(git ls-remote --tags --sort="v:refname" https://git.torproject.org/tor.git | grep -v 'rc'| grep -v 'alpha'| grep -v 'dev'| tail -n1| sed  's/.*\///; s/\^{}//')"
+  - export TOR_VERSION=$(cat .tor-version)
   - rm -f release_info
   - mv build_info release_info
   - . release_info
