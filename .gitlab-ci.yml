@@ -19,8 +19,7 @@ version:
   - git fetch --tags
   script:
     - release --bump-patch next-version > .next-version
-    - export TOR_VERSION=$(git ls-remote --tags --sort="v:refname" https://git.torproject.org/tor.git | grep -v 'rc'| grep -v 'alpha'| grep -v 'dev'| tail -n1| sed  's/.*\///; s/\^{}//')
-    - $TOR_VERSION > .tor-version
+    - export TOR_VERSION=$(git ls-remote --tags --sort="v:refname" https://git.torproject.org/tor.git | grep -v 'rc'| grep -v 'alpha'| grep -v 'dev'| tail -n1| sed  's/.*\///; s/\^{}//') > .tor-version
     - cat .next-version
     - cat .tor-version
   artifacts:
@@ -50,7 +49,7 @@ build_docker:
   - docker push $DOCKERHUB_REGISTRY_IMAGE:$RELEASE_VERSION-tor$TOR_VERSION 
   - >
     if [ "$CI_COMMIT_REF_SLUG" == "master" ]; then
-      docker tag $DOCKERHUB_REGISTRY_IMAGE:$RELEASE_VERSION-tor$TOR_VERSION  $DOCKERHUB_REGISTRY_IMAGE:latest
+      docker tag $DOCKERHUB_REGISTRY_IMAGE:$RELEASE_VERSION-$TOR_VERSION  $DOCKERHUB_REGISTRY_IMAGE:latest
       docker push $DOCKERHUB_REGISTRY_IMAGE:latest
     fi
   except:
@@ -75,7 +74,7 @@ version_tag:
   - echo -n "update version information v$RELEASE_VERSION ..."
   - release changelog
   - release commit-and-tag CHANGELOG.md release_info
-  - release --ci-commit-tag v$RELEASE_VERSION-tor$TOR_VERSION add-download-link --name release --url $RELEASE_URL --description "$RELEASE_DESC"
+  - release --ci-commit-tag v$RELEASE_VERSION-$TOR_VERSION add-download-link --name release --url $RELEASE_URL --description "$RELEASE_DESC"
   except:
     - tags
  
