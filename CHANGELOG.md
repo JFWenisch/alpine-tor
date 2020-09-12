@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.0.4
+2020-09-12
+
+### Fixes
+
+- tag naming (a76f0c8aead6da2ecac9851ae6d5bd89db83a4ba)
+
 ## 0.0.3
 2020-09-12
 
