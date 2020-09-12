@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.0.3
+2020-09-12
+
+### Fixes
+
+- release version (7ed99cf616c25f1534e3aed89deb7e959ed0c716)
+
 ## 0.0.2
 2020-09-12
 
