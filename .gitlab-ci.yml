@@ -66,15 +66,16 @@ version_tag:
   - echo "RELEASE_URL=https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/jobs/$CI_JOB_ID/artifacts/release" > build_info
   - echo "RELEASE_DESC=\"$(uname -mo) binary\"" >> build_info
   - echo "RELEASE_SHA=$CI_COMMIT_SHA" >> build_info
-  - echo "RELEASE_VERSION=$(<.next-version)" >> build_info
   - export TOR_VERSION=$(cat .tor-version)
+  - echo "RELEASE_VERSION=$(<.next-version).$TOR_VERSION" >> build_info
+ 
   - rm -f release_info
   - mv build_info release_info
   - . release_info
   - echo -n "update version information v$RELEASE_VERSION ..."
   - release changelog
   - release commit-and-tag CHANGELOG.md release_info
-  - release --ci-commit-tag v$RELEASE_VERSION+$TOR_VERSION add-download-link --name release --url $RELEASE_URL --description "$RELEASE_DESC"
+  - release --ci-commit-tag v$RELEASE_VERSION.$TOR_VERSION add-download-link --name release --url $RELEASE_URL --description "$RELEASE_DESC"
   except:
     - tags
  
