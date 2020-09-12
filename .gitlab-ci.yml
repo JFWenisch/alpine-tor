@@ -19,7 +19,7 @@ version:
   - git fetch --tags
   script:
     - release --bump-patch next-version > .next-version
-    - export TOR_VERSION=$(git ls-remote --tags --sort="v:refname" https://git.torproject.org/tor.git | grep -v 'rc'| grep -v 'alpha'| grep -v 'dev'| tail -n1| sed  's/.*\///; s/\^{}//') > .tor-version
+    - (git ls-remote --tags --sort="v:refname" https://git.torproject.org/tor.git | grep -v 'rc'| grep -v 'alpha'| grep -v 'dev'| tail -n1| sed  's/.*\///; s/\^{}//') > .tor-version
     - cat .next-version
     - cat .tor-version
   artifacts:
