@@ -2,6 +2,22 @@
 
 <!--- next entry here -->
 
+## 0.0.2
+2020-09-12
+
+### Fixes
+
+- fixed README.md, removed charts and class deployment.yaml due to being in own repository (eb18b9f129c950cbb1c051624590022a3dfc67bf)
+- adding tor version to tag (7993424442aa88656780715fe804731e91aebf56)
+- file naming gitlab-ci.yml (f1eeb803aede74cc7594c1de23ec356ac820044f)
+- tor version (6664f2f9b7dc757a0d169dfca7e9eca5f33a6f6b)
+- tor version (705b529fdeb1af86eab052a9f801a71def17a729)
+- tor version (c242a56df32550fbf0bdb1a4afd72519f8403c57)
+- tor release version as meta in tag (d0898344f23ad26f2fa187babe70f25513c1abda)
+- docker tag (c751dae0777246838c37842c9cfa4360278129c2)
+- dockerhub tag naming (028930fa57148601adf8fd349372a27251734265)
+- docker tag naming (8bf7a0a2c3c625835a498d535305b12b8980a4f5)
+
 ## 0.0.1
 2020-09-02
 
