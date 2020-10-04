@@ -100,7 +100,7 @@ mirror_github:
       docker tag $GITHUB_REGISTRY_IMAGE:$RELEASE_VERSION $GITHUB_REGISTRY_IMAGE:latest
       docker push $GITHUB_REGISTRY_IMAGE:latest
     fi
-    - >
+  - >
     if [ "$CI_COMMIT_REF_SLUG" == "master" ]; then
       docker tag $GITHUB_REGISTRY_IMAGE:$RELEASE_VERSION $GITHUB_REGISTRY_IMAGE:$OR_VERSION
       docker push $GITHUB_REGISTRY_IMAGE:$TOR_VERSION
