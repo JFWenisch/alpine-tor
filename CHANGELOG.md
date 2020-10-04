@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.0.6
+2020-10-04
+
+### Fixes
+
+- mirror image to ghcr.io (2ce6fd372f75ff80434faf569365ccbd699f0064)
+
 ## 0.0.5
 2020-09-12
 
