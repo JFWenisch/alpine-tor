@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.0.8
+2020-10-04
+
+### Fixes
+
+- intendation (4ae44a8dddaae971fc177067c50c5f8727aeacf2)
+
 ## 0.0.7
 2020-10-04
 
