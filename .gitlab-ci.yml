@@ -32,7 +32,7 @@ version:
         git remote set-url origin "https://$GITLABUSER:$GL_TOKEN@gitlab.com/jfwenisch.com/alpine-tor-docker.git"
         git config user.name $GITLABUSER
         git config user.email $GITLABUSERMAIL
-        git commit -m "fix: Updating tor to $TOR_VERSION" .tor-version
+        git commit -m "fix: Updating tor version $TOR_VERSION" .tor-version
         git push origin master
       fi
     - release --bump-patch next-version > .next-version
