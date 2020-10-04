@@ -35,7 +35,7 @@ version:
         git config user.name $GITLABUSER
         git config user.email $GITLABUSERMAIL
         git commit -m 'fix: Updating tor to $TOR_VERSION' .tor-version
-        git push
+        git push origin master
       fi
     - release --bump-patch next-version > .next-version
     - cat .next-version
