@@ -1,8 +1,8 @@
 image: maven:3-jdk-8-slim
 
 stages:
+  - version
   - docker
-  - deploy
   - mirror
 
 .default_cache: &default_cache
@@ -44,6 +44,30 @@ version:
   except:
     - tags
 
+version_tag:
+  stage: version
+  image: registry.gitlab.com/juhani/go-semrel-gitlab:v0.21.1
+  before_script:
+  - apt update
+  - apt install --no-install-recommends -y git
+  - git fetch --tags
+  script:
+  - echo "RELEASE_URL=https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/jobs/$CI_JOB_ID/artifacts/release" > build_info
+  - echo "RELEASE_DESC=\"$(uname -mo) binary\"" >> build_info
+  - echo "RELEASE_SHA=$CI_COMMIT_SHA" >> build_info
+  - export TOR_VERSION=$(cat .tor-version)
+  - echo "RELEASE_VERSION=$(<.next-version)" >> build_info
+  - export RELEASE_VERSION=$(cat .next-version)
+  - rm -f release_info
+  - mv build_info release_info
+  - . release_info
+  - echo -n "update version information v$RELEASE_VERSION ..."
+  - release changelog
+  - release commit-and-tag CHANGELOG.md release_info
+  - release --ci-commit-tag v$RELEASE_VERSION add-download-link --name release --url $RELEASE_URL --description "$RELEASE_DESC"
+  except:
+    - tags
+
 build_docker:
   image: docker:19.03.1
   stage: docker
@@ -70,29 +94,6 @@ build_docker:
   except:
   - tags
 
-version_tag:
-  stage: deploy
-  image: registry.gitlab.com/juhani/go-semrel-gitlab:v0.21.1
-  before_script:
-  - apt update
-  - apt install --no-install-recommends -y git
-  - git fetch --tags
-  script:
-  - echo "RELEASE_URL=https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/jobs/$CI_JOB_ID/artifacts/release" > build_info
-  - echo "RELEASE_DESC=\"$(uname -mo) binary\"" >> build_info
-  - echo "RELEASE_SHA=$CI_COMMIT_SHA" >> build_info
-  - export TOR_VERSION=$(cat .tor-version)
-  - echo "RELEASE_VERSION=$(<.next-version)" >> build_info
-  - export RELEASE_VERSION=$(cat .next-version)
-  - rm -f release_info
-  - mv build_info release_info
-  - . release_info
-  - echo -n "update version information v$RELEASE_VERSION ..."
-  - release changelog
-  - release commit-and-tag CHANGELOG.md release_info
-  - release --ci-commit-tag v$RELEASE_VERSION add-download-link --name release --url $RELEASE_URL --description "$RELEASE_DESC"
-  except:
-    - tags
   
 mirror_github:
   image: docker:latest
