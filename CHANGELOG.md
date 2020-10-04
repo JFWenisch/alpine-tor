@@ -2,6 +2,24 @@
 
 <!--- next entry here -->
 
+## 0.0.10
+2020-10-04
+
+### Fixes
+
+- autocommit new tor version (37d44c3c22d595c1ae30e0cb56036421e9b68e9a)
+-  (8b80b9ec254ab83b507cb2a5e888ec3cd0dfa483)
+- initial commit .tor-version (06b4b436f558c5eba196011156949a2f3c5b6847)
+-  (7a34a9ae5402061562c451ad3224b81d1fed30f8)
+-  (75bdfb93c7494463edb7f62dbbaa9c9bb1601f28)
+- autoupdate (90020d80c526e7fc82e92c1ad823f4103c8b56d7)
+-  (d1a80257bf3b85ab0eddfafaede82a3fcea7c1d5)
+-  (a7e1f7089c6a76f25e44f7ae55fc56494bb5b390)
+-  (88c65b074149220f494e16b550b0f26fe0a7fb17)
+-  (0d8fea0eb0bb5446940e62af2fb6712f13e2eac8)
+-  (c955e9acba7074f06990c4c4f036c8a04063eee4)
+- Updating tor to tor-0.4.4.5 (cbe70c7f51f6c3f8dbe965fa2e181c4d2d5a1eaf)
+
 ## 0.0.9
 2020-10-04
 
