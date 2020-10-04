@@ -20,7 +20,7 @@ version:
   - git fetch --tags
   script:
     - >
-      curl --location --output artifacts.zip
+      curl -k --location --output artifacts.zip
       --header "PRIVATE-TOKEN: $GL_TOKEN"
       "https://gitlab.com/api/v4/projects/20823440/jobs/artifacts/master/download?job=pre"
     - unzip artifacts.zip
