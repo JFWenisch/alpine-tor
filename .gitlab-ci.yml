@@ -29,7 +29,7 @@ version:
       if [ "$TOR_VERSION" != "$TOR_VERSION_OLD" ]; then
         git checkout $CI_COMMIT_REF_NAME
         git pull origin $CI_COMMIT_REF_NAME
-        git remote set-url origin "https://$GITLABUSER:$GL_TOKEN@https://gitlab.com/jfwenisch.com/alpine-tor-docker.git"
+        git remote set-url origin "https://$GITLABUSER:$GL_TOKEN@gitlab.com/jfwenisch.com/alpine-tor-docker.git"
         git config user.name $GITLABUSER
         git config user.email $GITLABUSERMAIL
         git commit -m "fix: Updating tor to $TOR_VERSION" .tor-version
