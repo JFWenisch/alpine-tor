@@ -16,13 +16,34 @@ version:
   image: registry.gitlab.com/juhani/go-semrel-gitlab:v0.21.1
   before_script:
   - apt update
-  - apt install --no-install-recommends -y git
+  - apt install --no-install-recommends -y git curl unzip
   - git fetch --tags
   script:
-    - release --bump-patch next-version > .next-version
+    - >
+      curl --location --output artifacts.zip
+      --header "PRIVATE-TOKEN: $GL_TOKEN"
+      "https://gitlab.com/api/v4/projects/20823440/jobs/artifacts/master/download?job=pre"
+    - unzip artifacts.zip
+    - mv .tor-version .tor-version.old
+    - rm .next-version
     - (git ls-remote --tags --sort="v:refname" https://git.torproject.org/tor.git | grep -v 'rc'| grep -v 'alpha'| grep -v 'dev'| tail -n1| sed  's/.*\///; s/\^{}//') > .tor-version
-    - cat .next-version
+    - export TOR_VERSION=$(cat .tor-version)
+    - export TOR_VERSION_OLD=$(cat .tor-version.old)
+    - cat .tor-version.old
     - cat .tor-version
+    - >
+      if [ "$TOR_VERSION" != "$TOR_VERSION_OLD" ]; then
+      git reset --hard
+      git clean -fd
+      git checkout $CI_COMMIT_REF_NAME
+      git pull origin $CI_COMMIT_REF_NAME
+      git remote set-url origin "https://$GITLABUSER:$GL_TOKEN@https://gitlab.com/jfwenisch.com/alpine-tor-docker.git"
+      git config user.name $GITLABUSER
+      git config user.email $GITLABUSERMAIL
+      git push -m 'Updating tor to $TOR_VERSION' .tor-version
+      fi
+    - release --bump-patch next-version > .next-version
+    - cat .next-version
   artifacts:
     paths:
     - .next-version
