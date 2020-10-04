@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.0.7
+2020-10-04
+
+### Fixes
+
+- mirroring to github (0b7f0e9b1c7fc2e7bf37d03f54570cde4fc7d9d9)
+
 ## 0.0.6
 2020-10-04
 
