@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.0.12
+2020-11-13
+
+### Fixes
+
+- Updating tor version tor-0.4.4.6 (a22b1092e0865f006dcb5dae00e4c697ecbfab96)
+
 ## 0.0.11
 2020-10-04
 
