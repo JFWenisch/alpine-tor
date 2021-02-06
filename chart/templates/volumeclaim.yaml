@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "alpine-tor.fullname" . }}-volumeclaim
+spec:
+  storageClassName: alpine-tor-storage
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100M

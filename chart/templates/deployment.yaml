@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "alpine-tor.fullname" . }}
+  labels:
+    {{- include "alpine-tor.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "alpine-tor.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "alpine-tor.selectorLabels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "alpine-tor.serviceAccountName" . }}
+      volumes:
+        - name: alpine-tor-storage
+          persistentVolumeClaim:
+            claimName: {{ include "alpine-tor.fullname" . }}-volumeclaim
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+            - mountPath: "/tor"
+              name: alpine-tor-storage
+          env:
+            - name: mode
+              value: {{ .Values.mode }}
+            - name: DirPort
+              value: {{ .Values.service.tordirport | quote}}
+            - name: ORPort
+              value: {{ .Values.service.tororport | quote}}
+            - name: SOCKSPort
+              value: {{ .Values.service.torsocksport | quote}}
+            - name: ContactInfo
+              value: {{ .Values.service.torcontactinfo | quote}}
+            - name: Nickname
+              value: {{ .Values.service.tornickname | quote}}
+            - name: DNSPort
+              value: {{ .Values.service.tordnsport | quote}}
+            - name: DNSListenAddress
+              value: {{ .Values.service.tordnslistenaddress | quote}}
+            - name: MyFamily
+              value: {{ .Values.service.tormyfamily | quote}}
+            - name: HiddenServiceDir
+              value: {{ .Values.service.torhiddenservicedir | quote}}
+            - name: HiddenServicePort
+              value: {{ .Values.service.torhiddenserviceport | quote}}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

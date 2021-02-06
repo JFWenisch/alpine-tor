@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "alpine-tor.fullname" . }}
+  labels:
+    {{- include "alpine-tor.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.tordirport }}
+      targetPort: {{ .Values.service.tordirport }}
+    {{- if .Values.samenodeport }}
+      nodePort: {{ .Values.service.tordirport }}
+    {{- end }}
+      protocol: TCP
+      name: dirserviceport
+    - port: {{ .Values.service.tororport }}
+      targetPort: {{ .Values.service.tororport }}
+       {{- if .Values.samenodeport }}
+      nodePort: {{ .Values.service.tororport }}
+    {{- end }}
+      protocol: TCP
+      name: orport
+    - port: {{ .Values.service.torsocksport }}
+      targetPort: {{ .Values.service.torsocksport }}
+   {{- if .Values.samenodeport }}
+      nodePort: {{ .Values.service.torsocksport }}
+   {{- end }}
+      protocol: TCP
+      name: socks5port
+      {{- if .Values.service.torhiddenserviceport }}
+    - port: {{ (split " " .Values.service.torhiddenserviceport)._0 }}
+      targetPort: {{ (split " " .Values.service.torhiddenserviceport)._0 }}
+         {{- if .Values.samenodeport }}
+      nodePort: {{ (split " " .Values.service.torhiddenserviceport)._0 }}
+         {{- end }}
+      protocol: TCP
+      name: socks5port
+         {{- end }}
+  
+  selector:
+    {{- include "alpine-tor.selectorLabels" . | nindent 4 }}
