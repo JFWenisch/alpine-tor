@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.0.15
+2021-02-06
+
+### Fixes
+
+- added k8s class yamls (ca9b1767efc4a1ae27b8b194a40353914fda91b4)
+
 ## 0.0.14
 2021-02-06
 
