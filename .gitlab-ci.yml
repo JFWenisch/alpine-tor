@@ -4,6 +4,7 @@ stages:
   - version
   - docker
   - mirror
+  - deploy
 
 .default_cache: &default_cache
   key: ${CI_COMMIT_REF_SLUG}
@@ -120,4 +121,29 @@ mirror_github:
       docker tag $GITHUB_REGISTRY_IMAGE:$RELEASE_VERSION $GITHUB_REGISTRY_IMAGE:$TOR_VERSION
       docker push $GITHUB_REGISTRY_IMAGE:$TOR_VERSION
     fi
- 
+
+upload_chart_ftp:
+  stage: deploy
+  image: alpine
+  variables:
+    HELM_EXPERIMENTAL_OCI: 1  
+  before_script:
+  - apk --no-cache add curl openssl bash git
+  - curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+  script:
+    - export RELEASE_VERSION=$(cat .next-version)
+    - helm package .
+    - git clone "https://$GITHUBUSER:$GITHUBTOKEN@github.com/JFWenisch/charts.git" /charts
+    - git config --global user.name "Jean-Fabian Wenisch"
+    - git config --global user.email "dev@jfwenisch.com"
+    - mv alpine-tor-$RELEASE_VERSION.tgz /charts/alpine-tor/alpine-tor-$RELEASE_VERSION.tgz
+    - cd /charts
+    - git add --all
+    - git commit -m "Adding alpine-tor $RELEASE_VERSION" alpine-tor-$RELEASE_VERSION.tgz
+    - git push origin master
+  only:
+    - production
+    - master
+  dependencies:
+  - version
+  - version_tag
