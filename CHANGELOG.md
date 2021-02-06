@@ -2,6 +2,27 @@
 
 <!--- next entry here -->
 
+## 0.0.13
+2021-02-04
+
+### Fixes
+
+- Updating tor version tor-0.4.4.7 (d5e5f00073caec5c0aa5ebc4d3851c8d276f897e)
+
+## 0.0.12
+2020-11-13
+
+### Fixes
+
+- Updating tor version tor-0.4.4.6 (a22b1092e0865f006dcb5dae00e4c697ecbfab96)
+
+## 0.0.11
+2020-10-04
+
+### Fixes
+
+- order of stages (3095cfab6d979a12d977b18696a7f94459313397)
+
 ## 0.0.10
 2020-10-04
 
