@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.0.18
+2021-02-07
+
+### Fixes
+
+- chart creation (09fed37fb16998520cae0c718d7fd11aa7949181)
+
 ## 0.0.17
 2021-02-07
 
