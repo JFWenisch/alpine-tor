@@ -75,7 +75,7 @@ upload_chart_ftp:
     - git clone "https://$GITHUBUSER:$GITHUBTOKEN@github.com/JFWenisch/charts.git" /charts
     - git config --global user.name "Jean-Fabian Wenisch"
     - git config --global user.email "dev@jfwenisch.com"
-    - cd chart && mv alpine-tor-$RELEASE_VERSION.tgz /charts/alpine-tor/alpine-tor-$RELEASE_VERSION.tgz
+    - mv alpine-tor-$RELEASE_VERSION.tgz /charts/alpine-tor/alpine-tor-$RELEASE_VERSION.tgz
     - cd /charts
     - git add --all
     - git commit -m "Adding alpine-tor $RELEASE_VERSION" alpine-tor-$RELEASE_VERSION.tgz
