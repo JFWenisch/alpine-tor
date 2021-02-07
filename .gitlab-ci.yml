@@ -80,12 +80,6 @@ upload_chart_ftp:
     - git add --all
     - git commit -m "Adding alpine-tor $RELEASE_VERSION" alpine-tor-$RELEASE_VERSION.tgz
     - git push origin master
-  only:
-    - production
-    - master
-  dependencies:
-  - version
-  - version_tag
 
 
 
