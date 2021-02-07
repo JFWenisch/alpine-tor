@@ -1,7 +1,6 @@
 image: maven:3-jdk-8-slim
 
 stages:
-  - version
   - docker
   - mirror
   - deploy
@@ -12,63 +11,6 @@ stages:
     - .m2/repository/
     - target
 
-version:
-  stage: .pre
-  image: registry.gitlab.com/juhani/go-semrel-gitlab:v0.21.1
-  before_script:
-  - apt update
-  - apt install --no-install-recommends -y git
-  - git fetch --tags
-  script:
-    - mv .tor-version .tor-version.old
-    - (git ls-remote --tags --sort="v:refname" https://git.torproject.org/tor.git | grep -v 'rc'| grep -v 'alpha'| grep -v 'dev'| tail -n1| sed  's/.*\///; s/\^{}//') > .tor-version
-    - export TOR_VERSION=$(cat .tor-version)
-    - export TOR_VERSION_OLD=$(cat .tor-version.old)
-    - cat .tor-version.old
-    - cat .tor-version
-    - >
-      if [ "$TOR_VERSION" != "$TOR_VERSION_OLD" ]; then
-        git checkout $CI_COMMIT_REF_NAME
-        git pull origin $CI_COMMIT_REF_NAME
-        git remote set-url origin "https://$GITLABUSER:$GL_TOKEN@gitlab.com/jfwenisch.com/alpine-tor-docker.git"
-        git config user.name $GITLABUSER
-        git config user.email $GITLABUSERMAIL
-        git commit -m "fix: Updating tor version $TOR_VERSION" .tor-version
-        git push origin master
-      fi
-    - release --bump-patch next-version > .next-version
-    - cat .next-version
-  artifacts:
-    paths:
-    - .next-version
-    - .tor-version
-  except:
-    - tags
-
-version_tag:
-  stage: version
-  image: registry.gitlab.com/juhani/go-semrel-gitlab:v0.21.1
-  before_script:
-  - apt update
-  - apt install --no-install-recommends -y git
-  - git fetch --tags
-  script:
-  - echo "RELEASE_URL=https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/jobs/$CI_JOB_ID/artifacts/release" > build_info
-  - echo "RELEASE_DESC=\"$(uname -mo) binary\"" >> build_info
-  - echo "RELEASE_SHA=$CI_COMMIT_SHA" >> build_info
-  - export TOR_VERSION=$(cat .tor-version)
-  - echo "RELEASE_VERSION=$(<.next-version)" >> build_info
-  - export RELEASE_VERSION=$(cat .next-version)
-  - rm -f release_info
-  - mv build_info release_info
-  - . release_info
-  - echo -n "update version information v$RELEASE_VERSION ..."
-  - release changelog
-  - release commit-and-tag CHANGELOG.md release_info
-  - release --ci-commit-tag v$RELEASE_VERSION add-download-link --name release --url $RELEASE_URL --description "$RELEASE_DESC"
-  except:
-    - tags
-
 build_docker:
   image: docker:19.03.1
   stage: docker
@@ -78,7 +20,6 @@ build_docker:
   services:
   - docker:19.03.5-dind 
   script:
-  - export RELEASE_VERSION=$(cat .next-version)
   - export TOR_VERSION=$(cat .tor-version)
   - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASSWORD $DOCKERHUB_REGISTRY
   - docker pull $DOCKERHUB_REGISTRY_IMAGE:latest || true
