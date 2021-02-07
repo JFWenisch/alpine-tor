@@ -39,8 +39,6 @@ build_docker:
   
 mirror_github:
   image: docker:latest
-  only:
-    - master
   stage: mirror
   services:
   - docker:dind
