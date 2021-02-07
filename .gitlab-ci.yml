@@ -78,7 +78,7 @@ upload_chart_ftp:
     - mv alpine-tor-$RELEASE_VERSION.tgz /charts/alpine-tor/alpine-tor-$RELEASE_VERSION.tgz
     - cd /charts
     - git add --all
-    - git commit -m "Adding alpine-tor $RELEASE_VERSION" alpine-tor-$RELEASE_VERSION.tgz
+    - git commit -m "Adding alpine-tor $RELEASE_VERSION" alpine-tor/alpine-tor-$RELEASE_VERSION.tgz
     - git push origin master
 
 
