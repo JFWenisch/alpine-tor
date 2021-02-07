@@ -20,6 +20,7 @@ docker pull jfwenisch/alpine-tor
 ### Build docker image manually
 
   
+To build the container using the latest release version run:
 
 ```
 
@@ -28,7 +29,16 @@ git pull https://github.com/JFWenisch/alpine-tor-docker.git
 docker build -t jfwenisch/alpine-tor .
 
 ```
+The latest release is fetched using latest tag from remote not containing 'alpha' or 'dev' or 'rc'.
 
+If you want to build a specific version set the build arg TORVERSION
+```
+
+git pull https://github.com/JFWenisch/alpine-tor-docker.git
+
+docker build -t jfwenisch/alpine-tor --build-arg TORVERSION=tor-0.4.4.6 .
+
+```
   
 
 ## Run container 
