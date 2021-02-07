@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.0.16
+2021-02-07
+
+### Fixes
+
+- build and option to specify version manually using --build-arg TORVERSION=$TAG (2c538a4da432c2afb63edcb93925a23761bd7d05)
+
 ## 0.0.15
 2021-02-06
 
