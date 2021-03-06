@@ -95,33 +95,6 @@ build_docker:
   except:
   - tags
 
-  
-mirror_github:
-  image: docker:latest
-  only:
-    - master
-  stage: mirror
-  services:
-  - docker:dind
-  script:
-  - export RELEASE_VERSION=$(cat .next-version)
-  - export TOR_VERSION=$(cat .tor-version)
-  - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASSWORD $DOCKERHUB_REGISTRY
-  - docker pull $DOCKERHUB_REGISTRY_IMAGE:$TOR_VERSION || true
-  - docker login -u $GITHUBUSER -p ${GITHUBTOKEN} ghcr.io
-  - docker tag $DOCKERHUB_REGISTRY_IMAGE:$TOR_VERSION $GITHUB_REGISTRY_IMAGE:$TOR_VERSION 
-  - docker push $GITHUB_REGISTRY_IMAGE:$TOR_VERSION
-  - >
-    if [ "$CI_COMMIT_REF_SLUG" == "master" ]; then
-      docker tag $GITHUB_REGISTRY_IMAGE:$RELEASE_VERSION $GITHUB_REGISTRY_IMAGE:latest
-      docker push $GITHUB_REGISTRY_IMAGE:latest
-    fi
-  - >
-    if [ "$CI_COMMIT_REF_SLUG" == "master" ]; then
-      docker tag $GITHUB_REGISTRY_IMAGE:$RELEASE_VERSION $GITHUB_REGISTRY_IMAGE:$TOR_VERSION
-      docker push $GITHUB_REGISTRY_IMAGE:$TOR_VERSION
-    fi
-
 upload_chart_ftp:
   stage: deploy
   image: alpine
