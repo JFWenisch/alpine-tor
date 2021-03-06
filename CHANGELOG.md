@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.0.21
+2021-03-06
+
+### Fixes
+
+- removed upload chart (1de7c71e0d65477f69791ce77f4ab2bf6de724f6)
+
 ## 0.0.20
 2021-03-06
 
