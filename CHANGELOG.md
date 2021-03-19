@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.0.23
+2021-03-19
+
+### Fixes
+
+- allow specification of exitnodes (98720082bafcb75a8559dc9e4afe13d3ecd9ecba)
+
 ## 0.0.22
 2021-03-17
 
