@@ -69,7 +69,7 @@ version_tag:
     - tags
 
 build_docker:
-  image: docker:19.03.1
+  image: quay.io/containers/buildah:latest
   stage: docker
   cache:
     << : *default_cache
@@ -79,17 +79,17 @@ build_docker:
   script:
   - export RELEASE_VERSION=$(cat .next-version)
   - export TOR_VERSION=$(cat .tor-version)
-  - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASSWORD $DOCKERHUB_REGISTRY
+  - buildah login -u $DOCKERHUB_USER -p $DOCKERHUB_PASSWORD $DOCKERHUB_REGISTRY
   - docker pull $DOCKERHUB_REGISTRY_IMAGE:latest || true
   - >
-    docker build --pull
+    buildah bud  --pull
     --tag $DOCKERHUB_REGISTRY_IMAGE:$TOR_VERSION
     --cache-from $DOCKERHUB_REGISTRY_IMAGE:latest --build-arg TORVERSION=$TOR_VERSION .
-  - docker push $DOCKERHUB_REGISTRY_IMAGE:$TOR_VERSION
+  - buildah push $DOCKERHUB_REGISTRY_IMAGE:$TOR_VERSION
   - >
     if [ "$CI_COMMIT_REF_SLUG" == "master" ]; then
-      docker tag $DOCKERHUB_REGISTRY_IMAGE:$TOR_VERSION $DOCKERHUB_REGISTRY_IMAGE:latest
-      docker push $DOCKERHUB_REGISTRY_IMAGE:latest
+      buildah tag $DOCKERHUB_REGISTRY_IMAGE:$TOR_VERSION $DOCKERHUB_REGISTRY_IMAGE:latest
+      buildah push $DOCKERHUB_REGISTRY_IMAGE:latest
     fi
   except:
   - tags
