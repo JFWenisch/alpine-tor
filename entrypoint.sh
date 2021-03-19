@@ -52,6 +52,9 @@ fi
 if [ -n "$HiddenServicePort" ]; then
   echo "HiddenServicePort $HiddenServicePort" >> /etc/tor/torrc
 fi
+if [ -n "$ExitNodes" ]; then
+  echo " ExitNodes  $ExitNodes" >> /etc/tor/torrc
+fi
 
 #Startup
 echo "Running tor -f /etc/tor/torrc"

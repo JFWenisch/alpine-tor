@@ -98,7 +98,7 @@ docker run -e mode=${mode} jfwenisch/alpine-tor
   
 
         
-        docker run -e mode=proxy -e SocksPort=9050 -p 9050:9050 jfwenisch/alpine-tor
+        docker run -e mode=proxy -e SOCKSPort=9050 -p 9050:9050 jfwenisch/alpine-tor
        
 
 

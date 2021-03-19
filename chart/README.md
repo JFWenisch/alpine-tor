@@ -82,6 +82,7 @@ helm install --dry-run --debug --generate-name --set mode=mide --set samenodepor
 --set service.tormyfamily=""
 --set service.torhiddenservicedir=""
 --set service.torhiddenserviceport=""
+--set service.exitnodes="{DE}"
 ```
 
 ### Quickstart

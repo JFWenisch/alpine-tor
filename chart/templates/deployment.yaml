@@ -57,6 +57,8 @@ spec:
               value: {{ .Values.service.torhiddenservicedir | quote}}
             - name: HiddenServicePort
               value: {{ .Values.service.torhiddenserviceport | quote}}
+            - name: ExitNodes
+              value: {{ .Values.service.exitnodes | quote}}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
