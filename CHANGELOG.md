@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.0.24
+2021-03-19
+
+### Fixes
+
+- docker build with buildah (8fab1feb101aa1a52df51087310128dac480f45b)
+
 ## 0.0.23
 2021-03-19
 
