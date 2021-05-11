@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.0.25
+2021-05-11
+
+### Fixes
+
+- Updating tor version tor-0.4.5.8 (2f2366c5d7b3a14ea44c95bc9c3c3138b4ca6131)
+
 ## 0.0.24
 2021-03-19
 
