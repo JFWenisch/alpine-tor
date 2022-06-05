@@ -2,6 +2,16 @@
 
 <!--- next entry here -->
 
+## 0.0.28
+2022-06-05
+
+### Fixes
+
+- removed apt-update in version stage (e93ae311767e2d18bfaa95ed71459e51d517ada2)
+- updated sources. See https://serverfault.com/questions/1074688/security-debian-org-does-not-have-a-release-file-on-with-debian-docker-images (94ca766da6f685368bdcabdc6be1ffb977931db1)
+- Updating tor version tor-0.4.7.7 (b08badf054f914cc6586be644289546b92ca2b82)
+- update sources during version tag (5a01f53537fdeea8a10ef044a8bfd8e585c7ad66)
+
 ## 0.0.27
 2021-07-01
 
