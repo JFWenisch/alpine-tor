@@ -2,6 +2,13 @@
 
 <!--- next entry here -->
 
+## 0.0.29
+2022-06-05
+
+### Fixes
+
+- changed obfs4proxy to version obfs4proxy=0.0.11-r7 (9963eaed7bdff7472016965dc7574875c1488220)
+
 ## 0.0.28
 2022-06-05
 
