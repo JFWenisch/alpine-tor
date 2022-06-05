@@ -27,7 +27,7 @@ RUN apk --no-cache add --update \
         automake \
         autoconf
 #Add obfs4proxy for usage as bridge
-RUN apk add --no-cache obfs4proxy=0.0.11-r2   --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing
+RUN apk add --no-cache obfs4proxy=0.0.11-r7   --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing
 # Create a group and user
 #RUN addgroup -S torusergrp && adduser -S toruser -G torusergrp
 
