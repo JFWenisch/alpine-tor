@@ -10,9 +10,11 @@ RUN apk update
 RUN apk --no-cache add --update \
         gnupg \
         build-base \
+        ca-certificates \
         gcc \
         wget \
         git \
+        libcap \
         libevent \
         libevent-dev \
         libressl \
@@ -34,7 +36,7 @@ RUN apk add --no-cache lyrebird=0.5.0-r0   --repository http://dl-cdn.alpinelinu
 
 
 #Build
-RUN git clone https://git.torproject.org/tor.git
+RUN git clone https://gitlab.torproject.org/tpo/core/tor.git
 #Get the latest tag from remote not containing 'alpha' or 'dev' or 'rc' and switch to it (git checkout $release). 
 
 RUN if [[ -z "$TORVERSION" ]] ; then export TORVERSION=$(git ls-remote --tags --sort="v:refname" https://git.torproject.org/tor.git | grep -v 'rc'| grep -v 'alpha'| grep -v 'dev'| tail -n1| sed  's/.*\///; s/\^{}//') &&  cd tor && git checkout $TORVERSION; else echo Build argument torversion is $TORVERSION &&  cd tor && git checkout $TORVERSION; fi
