@@ -27,7 +27,7 @@ RUN apk --no-cache add --update \
         automake \
         autoconf
 #Add obfs4proxy for usage as bridge
-RUN apk add --no-cache lyrebird=0.5.0-r0   --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing
+RUN apk add --no-cache lyrebird=0.5.0-r0   --repository http://dl-cdn.alpinelinux.org/alpine/edge/community
 # Create a group and user
 #RUN addgroup -S torusergrp && adduser -S toruser -G torusergrp
 
