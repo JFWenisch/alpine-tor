@@ -15,12 +15,13 @@ RUN apk --no-cache add --update \
         gnupg \
         wget \
         git \
-        libcap \
+        libcap-dev \
         libevent \
         libevent-dev \
         libressl \
         libressl-dev \
-        openssl \
+        libseccomp-dev \
+        openssl-dev \
         xz-libs \
         xz-dev \
         zlib \
@@ -35,38 +36,14 @@ RUN apk add --no-cache lyrebird=0.5.0-r0   --repository http://dl-cdn.alpinelinu
 # Create a group and user
 #RUN addgroup -S torusergrp && adduser -S toruser -G torusergrp
 
-
-#Build
-################## remove build from repo, and make from tarball
-#RUN git clone https://gitlab.torproject.org/tpo/core/tor.git
+RUN git clone https://gitlab.torproject.org/tpo/core/tor.git
 #Get the latest tag from remote not containing 'alpha' or 'dev' or 'rc' and switch to it (git checkout $release). 
-#RUN if [[ -z "$TORVERSION" ]] ; then export TORVERSION=$(git ls-remote --tags --sort="v:refname" https://git.torproject.org/tor.git | grep -v 'rc'| grep -v 'alpha'| grep -v 'dev'| tail -n1| sed  's/.*\///; s/\^{}//') &&  cd tor && git checkout $TORVERSION; else echo Build argument torversion is $TORVERSION &&  cd tor && git checkout $TORVERSION; fi
-#RUN cd tor && ./autogen.sh
-#RUN cd tor && ./configure --disable-asciidoc
-#RUN cd tor && make
-#RUN cd tor && make install
-#RUN rm -rf /tor
-###########################################################
-RUN (git ls-remote --tags --sort="v:refname" https://git.torproject.org/tor.git | grep -v 'rc'| grep -v 'alpha'| grep -v 'dev'| tail -n1| sed  's/.*\///; s/\^{}//') > .tor-version
-
-RUN TORVERSION=$(cat .tor-version) && wget --no-verbose https://www.torproject.org/dist/$TORVERSION.tar.gz
-#RUN TORVERSION=$(cat .tor-version) && wget --no-verbose https://www.torproject.org/dist/$TORVERSION.tar.gz.asc
-#RUN gpg --keyserver ipv4.pool.sks-keyservers.net --recv-keys \
-#  0x6AFEE6D49E92B601 \
-#  0x28988BF5 \
-#  0x19F78451 && 
-#RUN TORVERSION=$(cat .tor-version) && gpg --verify tor-${TORVERSION}.tar.gz.asc
-#RUN export "CFLAGS=-Wno-cpp
-RUN TORVERSION=$(cat .tor-version) && tar -zxf $TORVERSION.tar.gz  && cd $TORVERSION && \
-./configure \
-  --disable-gcc-warnings-advisory \
-  --localstatedir=/var \
-  --prefix=/usr \
-  --silent \
-  --sysconfdir=/etc
-RUN TORVERSION=$(cat .tor-version) && cd $TORVERSION && make 
-RUN TORVERSION=$(cat .tor-version) && cd $TORVERSION && make test
-
+RUN if [[ -z "$TORVERSION" ]] ; then export TORVERSION=$(git ls-remote --tags --sort="v:refname" https://git.torproject.org/tor.git | grep -v 'rc'| grep -v 'alpha'| grep -v 'dev'| tail -n1| sed  's/.*\///; s/\^{}//') &&  cd tor && git checkout $TORVERSION; else echo Build argument torversion is $TORVERSION &&  cd tor && git checkout $TORVERSION; fi
+RUN cd tor && ./autogen.sh
+RUN cd tor && ./configure --disable-asciidoc
+RUN cd tor && make
+RUN cd tor && make install
+RUN rm -rf /tor
 RUN rm -rf /var/cache/apk/*
 COPY torrc /etc/tor/torrc
 
