@@ -47,8 +47,8 @@ RUN apk add --no-cache lyrebird=0.5.0-r0   --repository http://dl-cdn.alpinelinu
 #RUN cd tor && make install
 #RUN rm -rf /tor
 ###########################################################
+RUN if [[ -z "$TORVERSION" ]] ; then export TORVERSION=$(git ls-remote --tags --sort="v:refname" https://git.torproject.org/tor.git | grep -v 'rc'| grep -v 'alpha'| grep -v 'dev'| tail -n1| sed  's/.*\///; s/\^{}//'); else echo Build argument torversion is $TORVERSION; fi
 
-RUN if [[ -z "$TORVERSION" ]] ; then export TORVERSION=$(git ls-remote --tags --sort="v:refname" https://git.torproject.org/tor.git | grep -v 'rc'| grep -v 'alpha'| grep -v 'dev'| tail -n1| sed  's/.*\///; s/\^{}//') 
 RUN wget --no-verbose https://www.torproject.org/dist/tor-${TOR_VERSION}.tar.gz
 RUN wget --no-verbose https://www.torproject.org/dist/tor-${TOR_VERSION}.tar.gz.asc
 RUN gpg --keyserver ipv4.pool.sks-keyservers.net --recv-keys \
