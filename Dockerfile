@@ -19,8 +19,8 @@ RUN apk --no-cache add --update \
         libevent-dev \
         libressl \
         libressl-dev \
-        libseccomp-dev \
-        openssl-dev \
+        libseccomp \
+        openssl \
         xz-libs \
         xz-dev \
         zlib \
