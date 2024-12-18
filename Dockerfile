@@ -64,8 +64,8 @@ RUN TORVERSION=$(cat .tor-version) && tar -zxf $TORVERSION.tar.gz  && cd $TORVER
   --prefix=/usr \
   --silent \
   --sysconfdir=/etc
-RUN make install
-RUN make test
+RUN TORVERSION=$(cat .tor-version) && cd $TORVERSION && make 
+RUN TORVERSION=$(cat .tor-version) && cd $TORVERSION && make test
 
 RUN rm -rf /var/cache/apk/*
 COPY torrc /etc/tor/torrc
