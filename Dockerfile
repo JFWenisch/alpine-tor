@@ -47,16 +47,16 @@ RUN apk add --no-cache lyrebird=0.5.0-r0   --repository http://dl-cdn.alpinelinu
 #RUN cd tor && make install
 #RUN rm -rf /tor
 ###########################################################
-RUN if [[ -z "$TORVERSION" ]] ; then export TORVERSION=$(git ls-remote --tags --sort="v:refname" https://git.torproject.org/tor.git | grep -v 'rc'| grep -v 'alpha'| grep -v 'dev'| tail -n1| sed  's/.*\///; s/\^{}//'); else echo Build argument torversion is $TORVERSION; fi
+RUN (git ls-remote --tags --sort="v:refname" https://git.torproject.org/tor.git | grep -v 'rc'| grep -v 'alpha'| grep -v 'dev'| tail -n1| sed  's/.*\///; s/\^{}//') > .tor-version
 
-RUN wget --no-verbose https://www.torproject.org/dist/ $TORVERSION.tar.gz
-RUN wget --no-verbose https://www.torproject.org/dist/${TOR_VERSION}.tar.gz.asc
+RUN wget --no-verbose https://www.torproject.org/dist/$TORVERSION.tar.gz
+RUN TORVERSION=$(cat .tor-version) && wget --no-verbose https://www.torproject.org/dist/$TORVERSION.tar.gz.asc
 RUN gpg --keyserver ipv4.pool.sks-keyservers.net --recv-keys \
   0x6AFEE6D49E92B601 \
   0x28988BF5 \
   0x19F78451 && 
-RUN gpg --verify tor-${TORVERSION}.tar.gz.asc && export "CFLAGS=-Wno-cpp" && tar -zxf ${TORVERSION}.tar.gz
-RUN cd ${TORVERSION} && \
+RUN TORVERSION=$(cat .tor-version) && gpg --verify tor-${TORVERSION}.tar.gz.asc && export "CFLAGS=-Wno-cpp" && tar -zxf $TORVERSION.tar.gz
+RUN TORVERSION=$(cat .tor-version) && cd $TORVERSION && \
 ./configure \
   --disable-gcc-warnings-advisory \
   --localstatedir=/var \
