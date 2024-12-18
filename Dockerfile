@@ -64,7 +64,7 @@ RUN TORVERSION=$(cat .tor-version) && tar -zxf $TORVERSION.tar.gz  && cd $TORVER
   --prefix=/usr \
   --silent \
   --sysconfdir=/etc
-RUN make
+RUN make install
 RUN make test
 
 RUN rm -rf /var/cache/apk/*
