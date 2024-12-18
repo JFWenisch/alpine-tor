@@ -14,13 +14,13 @@ RUN apk --no-cache add --update \
         gcc \
         wget \
         git \
-        libcap \
+        libcap-dev \
         libevent \
         libevent-dev \
         libressl \
         libressl-dev \
-        libseccomp \
-        openssl-dev \
+        libseccomp-dev \
+        openssl \
         xz-libs \
         xz-dev \
         zlib \
