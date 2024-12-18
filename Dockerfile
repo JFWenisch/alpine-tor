@@ -12,10 +12,9 @@ RUN apk --no-cache add --update \
         build-base \
         ca-certificates \
         gcc \
-        gnupg \
         wget \
         git \
-        libcap-dev \
+        libcap \
         libevent \
         libevent-dev \
         libressl \
