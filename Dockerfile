@@ -41,7 +41,7 @@ RUN git clone https://gitlab.torproject.org/tpo/core/tor.git
 #Get the latest tag from remote not containing 'alpha' or 'dev' or 'rc' and switch to it (git checkout $release). 
 RUN if [[ -z "$TORVERSION" ]] ; then export TORVERSION=$(git ls-remote --tags --sort="v:refname" https://git.torproject.org/tor.git | grep -v 'rc'| grep -v 'alpha'| grep -v 'dev'| tail -n1| sed  's/.*\///; s/\^{}//') &&  cd tor && git checkout $TORVERSION; else echo Build argument torversion is $TORVERSION &&  cd tor && git checkout $TORVERSION; fi
 RUN cd tor && ./autogen.sh
-RUN cd tor && ./configure --disable-asciidoc
+RUN cd tor && ./configure --with-libevent-dir=/usr/local --disable-asciidoc
 RUN cd tor && make
 RUN cd tor && make install
 RUN rm -rf /tor
