@@ -12,6 +12,7 @@ RUN apk --no-cache add --update \
         build-base \
         ca-certificates \
         gcc \
+        gnupg \
         wget \
         git \
         libcap \
@@ -36,19 +37,36 @@ RUN apk add --no-cache lyrebird=0.5.0-r0   --repository http://dl-cdn.alpinelinu
 
 
 #Build
-RUN git clone https://gitlab.torproject.org/tpo/core/tor.git
+################## remove build from repo, and make from tarball
+#RUN git clone https://gitlab.torproject.org/tpo/core/tor.git
 #Get the latest tag from remote not containing 'alpha' or 'dev' or 'rc' and switch to it (git checkout $release). 
+#RUN if [[ -z "$TORVERSION" ]] ; then export TORVERSION=$(git ls-remote --tags --sort="v:refname" https://git.torproject.org/tor.git | grep -v 'rc'| grep -v 'alpha'| grep -v 'dev'| tail -n1| sed  's/.*\///; s/\^{}//') &&  cd tor && git checkout $TORVERSION; else echo Build argument torversion is $TORVERSION &&  cd tor && git checkout $TORVERSION; fi
+#RUN cd tor && ./autogen.sh
+#RUN cd tor && ./configure --disable-asciidoc
+#RUN cd tor && make
+#RUN cd tor && make install
+#RUN rm -rf /tor
+###########################################################
 
-RUN if [[ -z "$TORVERSION" ]] ; then export TORVERSION=$(git ls-remote --tags --sort="v:refname" https://git.torproject.org/tor.git | grep -v 'rc'| grep -v 'alpha'| grep -v 'dev'| tail -n1| sed  's/.*\///; s/\^{}//') &&  cd tor && git checkout $TORVERSION; else echo Build argument torversion is $TORVERSION &&  cd tor && git checkout $TORVERSION; fi
+RUN if [[ -z "$TORVERSION" ]] ; then export TORVERSION=$(git ls-remote --tags --sort="v:refname" https://git.torproject.org/tor.git | grep -v 'rc'| grep -v 'alpha'| grep -v 'dev'| tail -n1| sed  's/.*\///; s/\^{}//') 
+RUN wget --no-verbose https://www.torproject.org/dist/tor-${TOR_VERSION}.tar.gz
+RUN wget --no-verbose https://www.torproject.org/dist/tor-${TOR_VERSION}.tar.gz.asc
+RUN gpg --keyserver ipv4.pool.sks-keyservers.net --recv-keys \
+  0x6AFEE6D49E92B601 \
+  0x28988BF5 \
+  0x19F78451 && 
+RUN gpg --verify tor-${TORVERSION}.tar.gz.asc && export "CFLAGS=-Wno-cpp" && tar -zxf tor-${TORVERSION}.tar.gz
+RUN cd tor-${TORVERSION} && \
+./configure \
+  --disable-gcc-warnings-advisory \
+  --localstatedir=/var \
+  --prefix=/usr \
+  --silent \
+  --sysconfdir=/etc
+RUN make
+RUN make test
 
-RUN cd tor && ./autogen.sh
-RUN cd tor && ./configure --disable-asciidoc
-RUN cd tor && make
-RUN cd tor && make install
 RUN rm -rf /var/cache/apk/*
-RUN rm -rf /tor
-
-
 COPY torrc /etc/tor/torrc
 
 COPY entrypoint.sh /entrypoint.sh
