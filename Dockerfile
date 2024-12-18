@@ -56,8 +56,8 @@ RUN TORVERSION=$(cat .tor-version) && wget --no-verbose https://www.torproject.o
 #  0x28988BF5 \
 #  0x19F78451 && 
 #RUN TORVERSION=$(cat .tor-version) && gpg --verify tor-${TORVERSION}.tar.gz.asc
-#RUN export "CFLAGS=-Wno-cpp" && tar -zxf $TORVERSION.tar.gz
-RUN TORVERSION=$(cat .tor-version) && cd $TORVERSION && \
+#RUN export "CFLAGS=-Wno-cpp
+RUN TORVERSION=$(cat .tor-version) && tar -zxf $TORVERSION.tar.gz  && cd $TORVERSION && \
 ./configure \
   --disable-gcc-warnings-advisory \
   --localstatedir=/var \
