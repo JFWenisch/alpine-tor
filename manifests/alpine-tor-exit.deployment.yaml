@@ -7,10 +7,10 @@ metadata:
 spec:
   type: NodePort 
   ports:
-  - port: 80
-    targetPort: 80
+  - port: 443
+    targetPort: 443
     protocol: TCP
-    name: dirservicePort
+    name: orport
   selector:
     deploy: alpine-tor-exit
 ---
@@ -31,6 +31,11 @@ spec:
       containers:
         - name: alpine-tor-exit
           image: jfwenisch/alpine-tor
+          ports:
+          - containerPort: 443
+            name: orport
           env:
           - name: mode
             value: exit
+          - name: ORPort
+            value: "443"
