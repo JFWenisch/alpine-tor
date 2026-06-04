@@ -6,6 +6,7 @@ replicaCount: 1
 
 image:
   repository: jfwenisch/alpine-tor
+  tag: ""
   pullPolicy: Always
 
 mode: proxy
@@ -35,16 +36,22 @@ securityContext: {}
 
 service:
   type: NodePort
-  tordirport:  80
   tororport:  443
+  tortransportport: 4444
   torsocksport: 9050
-  torcontactinfo: "J.-Fabian Wenisch <info AT jfwenisch dot com>"
-  tornickname:  "AlpineTor"
+  tordirport:
+  tordirfrontpage:
+  torcontactinfo: ""
+  tornickname: ""
   tordnsport:
   tordnslistenaddress:
   tormyfamily:
   torhiddenservicedir:
   torhiddenserviceport:
+  torexitpolicy:
+  torreducedexitpolicy:
+  torpublishserverdescriptor:
+  toraddress:
   exitnodes:
 
 

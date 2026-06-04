@@ -1,0 +1,145 @@
+name: Nightly Tor Version
+
+on:
+  schedule:
+    - cron: '23 7 * * *'
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      tor_version: ${{ steps.version-check.outputs.latest_version }}
+      version_changed: ${{ steps.version-check.outputs.version_changed }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: refs/heads/${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+
+      - name: Check latest Tor version
+        id: version-check
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          current_version="$(tr -d '\r\n' < .tor-version)"
+          latest_version="$(
+            git ls-remote --tags --sort='v:refname' https://gitlab.torproject.org/tpo/core/tor.git \
+              | grep -Ev 'rc|alpha|dev' \
+              | tail -n1 \
+              | sed 's/.*\///; s/\^{}//'
+          )"
+
+          echo "Current version: ${current_version}"
+          echo "Latest version: ${latest_version}"
+
+          echo "latest_version=${latest_version}" >> "$GITHUB_OUTPUT"
+
+          if [ "${latest_version}" != "${current_version}" ]; then
+            printf '%s\n' "${latest_version}" > .tor-version
+            echo "version_changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "version_changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Refresh tracked torrc from upstream tag
+        if: steps.version-check.outputs.version_changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          latest_version="${{ steps.version-check.outputs.latest_version }}"
+          tmp_dir="$(mktemp -d)"
+          trap 'rm -rf "${tmp_dir}"' EXIT
+
+          git -C "${tmp_dir}" init
+          git -C "${tmp_dir}" remote add origin https://gitlab.torproject.org/tpo/core/tor.git
+          git -C "${tmp_dir}" fetch --depth 1 origin "refs/tags/${latest_version}:refs/tags/${latest_version}"
+
+          if git -C "${tmp_dir}" cat-file -e "${latest_version}:src/config/torrc.sample.in"; then
+            git -C "${tmp_dir}" show "${latest_version}:src/config/torrc.sample.in" > torrc
+          else
+            git -C "${tmp_dir}" show "${latest_version}:src/config/torrc.sample" > torrc
+          fi
+
+          echo "Updated tracked torrc from upstream tag ${latest_version}"
+
+      - name: Commit updated Tor version and torrc
+        if: steps.version-check.outputs.version_changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .tor-version torrc
+          git commit -m "chore: sync Tor version and torrc to ${{ steps.version-check.outputs.latest_version }} [skip ci]"
+          git push origin HEAD:${{ github.event.repository.default_branch }}
+
+  build:
+    needs: check-version
+    if: needs.check-version.outputs.version_changed == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: refs/heads/${{ github.event.repository.default_branch }}
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20 #v3.5.0
+        with:
+          cosign-release: 'v2.2.4'
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # v3.0.0
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha
+            type=raw,value=latest
+            type=raw,value=${{ needs.check-version.outputs.tor_version }}
+
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
+        with:
+          context: .
+          build-args: |
+            TORVERSION=${{ needs.check-version.outputs.tor_version }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Sign the published Docker image
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+        run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}

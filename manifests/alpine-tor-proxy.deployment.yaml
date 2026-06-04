@@ -31,6 +31,11 @@ spec:
       containers:
         - name: alpine-tor-proxy
           image: jfwenisch/alpine-tor
+          ports:
+          - containerPort: 9050
+            name: socks5
           env:
           - name: mode
             value: proxy
+          - name: SOCKSPort
+            value: "9050"

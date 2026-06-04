@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: alpine-tor-bridge-service
+  labels:
+    deploy: alpine-tor-bridge
+spec:
+  type: NodePort 
+  ports:
+  - port: 443
+    targetPort: 443
+    protocol: TCP
+    name: orport
+  - port: 4444
+    targetPort: 4444
+    protocol: TCP
+    name: obfs4
+  selector:
+    deploy: alpine-tor-bridge
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: alpine-tor-bridge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deploy: alpine-tor-bridge
+  template:
+    metadata:
+      labels:
+        deploy: alpine-tor-bridge
+    spec:
+      containers:
+        - name: alpine-tor-bridge
+          image: jfwenisch/alpine-tor
+          ports:
+          - containerPort: 443
+            name: orport
+          - containerPort: 4444
+            name: obfs4
+          env:
+          - name: mode
+            value: bridge
+          - name: ORPort
+            value: "443"
+          - name: TransportPort
+            value: "4444"

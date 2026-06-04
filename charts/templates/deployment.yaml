@@ -1,0 +1,104 @@
+{{- $mode := .Values.mode | default "proxy" -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "alpine-tor.fullname" . }}
+  labels:
+    {{- include "alpine-tor.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "alpine-tor.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "alpine-tor.selectorLabels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "alpine-tor.serviceAccountName" . }}
+      volumes:
+        - name: alpine-tor-storage
+          persistentVolumeClaim:
+            claimName: {{ include "alpine-tor.fullname" . }}-volumeclaim
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+            - mountPath: "/tor"
+              name: alpine-tor-storage
+          ports:
+            {{- if eq $mode "proxy" }}
+            - containerPort: {{ .Values.service.torsocksport }}
+              name: socks5
+            {{- else }}
+            - containerPort: {{ .Values.service.tororport }}
+              name: orport
+            {{- if and (eq $mode "bridge") .Values.service.tortransportport }}
+            - containerPort: {{ .Values.service.tortransportport }}
+              name: obfs4
+            {{- end }}
+            {{- if and (eq $mode "exit") .Values.service.tordirport }}
+            - containerPort: {{ .Values.service.tordirport }}
+              name: dirport
+            {{- end }}
+            {{- end }}
+          env:
+            - name: mode
+              value: {{ $mode | quote }}
+            - name: DirPort
+              value: {{ .Values.service.tordirport | default "" | quote}}
+            - name: DirPortFrontPage
+              value: {{ .Values.service.tordirfrontpage | default "" | quote}}
+            - name: ORPort
+              value: {{ .Values.service.tororport | default "" | quote}}
+            - name: TransportPort
+              value: {{ .Values.service.tortransportport | default "" | quote}}
+            - name: SOCKSPort
+              value: {{ .Values.service.torsocksport | default "" | quote}}
+            - name: ContactInfo
+              value: {{ .Values.service.torcontactinfo | default "" | quote}}
+            - name: Nickname
+              value: {{ .Values.service.tornickname | default "" | quote}}
+            - name: DNSPort
+              value: {{ .Values.service.tordnsport | default "" | quote}}
+            - name: DNSListenAddress
+              value: {{ .Values.service.tordnslistenaddress | default "" | quote}}
+            - name: MyFamily
+              value: {{ .Values.service.tormyfamily | default "" | quote}}
+            - name: HiddenServiceDir
+              value: {{ .Values.service.torhiddenservicedir | default "" | quote}}
+            - name: HiddenServicePort
+              value: {{ .Values.service.torhiddenserviceport | default "" | quote}}
+            - name: ExitPolicy
+              value: {{ .Values.service.torexitpolicy | default "" | quote}}
+            - name: ReducedExitPolicy
+              value: {{ .Values.service.torreducedexitpolicy | default "" | quote}}
+            - name: PublishServerDescriptor
+              value: {{ .Values.service.torpublishserverdescriptor | default "" | quote}}
+            - name: Address
+              value: {{ .Values.service.toraddress | default "" | quote}}
+            - name: ExitNodes
+              value: {{ .Values.service.exitnodes | default "" | quote}}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

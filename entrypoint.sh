@@ -1,61 +1,94 @@
- #!/bin/sh
+#!/bin/sh
+
+append_config() {
+  printf '%s\n' "$1" >> /etc/tor/torrc
+}
+
+append_if_set() {
+  name="$1"
+  value="$2"
+  if [ -n "$value" ]; then
+    append_config "$name $value"
+  fi
+}
+
+require_env() {
+  name="$1"
+  value="$2"
+  if [ -z "$value" ]; then
+    echo "Required environment variable '$name' is not set for mode '$mode'."
+    exit 1
+  fi
+}
+
+transport_port="${TransportPort:-$PTPort}"
+
 echo "Running jfwenisch/alpine-tor"
 echo -e "Alpine Version: \c" && cat /etc/alpine-release
 echo -e "Tor Version: \c" && tor --version
-echo -e "OBFS4Proxy Version: \c" && obfs4proxy -version
+echo -e "Lyrebird Version: \c" && lyrebird -version
 echo "Searching for environment variable 'mode'"
-echo "ContactInfo $ContactInfo" >> /etc/tor/torrc
-echo "Nickname $Nickname" >> /etc/tor/torrc
 
-#Set required values depending on set mode
-if [ "$mode" = "exit" ]
-then
-   echo "Starting up as exit node"
-   echo "ExitRelay 1" >> /etc/tor/torrc
-   echo "DirPort 0.0.0.0:$DirPort" >> /etc/tor/torrc
-   echo "DirPortFrontPage /path/to/html/file" >> /etc/tor/torrc
-elif [ "$mode" = "middle" ]
-then
-   echo "Starting up as middle / guard node"
-   echo "ORPort 0.0.0.0:$ORPort" >> /etc/tor/torrc
-   echo "ExitRelay 0" >> /etc/tor/torrc
-   echo "SocksPort 0" >> /etc/tor/torrc
-   echo "ControlSocket 0" >> /etc/tor/torrc
-elif [ "$mode" = "bridge" ]
-then
-  echo "Starting up as bridge node"
-  echo "ORPort 0.0.0.0:$ORPort" >> /etc/tor/torrc
-  echo "BridgeRelay 1" >> /etc/tor/torrc
-  echo "ServerTransportPlugin obfs4 exec /usr/local/bin/obfs4proxy" >> /etc/tor/torrc
-  echo "ExtORPort auto" >> /etc/tor/torrc
-elif [ "$mode" = "proxy" ]
-then
-  echo "Starting up as proxy"
-  echo "SOCKSPort 0.0.0.0:$SOCKSPort" >> /etc/tor/torrc
-else
-   echo "No mode set. Please refer to the Readme.md on how to run. Exiting."
-   exit;
-fi
-#Additional optional values
-if [ -n "$DNSPort" ]; then
-  echo "DNSPort $DNSPort" >> /etc/tor/torrc
-fi
-if [ -n "$DNSListenAddress" ]; then
-  echo "DNSListenAddress $DNSListenAddress" >> /etc/tor/torrc
-fi
-if [ -n "$MyFamily" ]; then
-  echo "MyFamily $MyFamily" >> /etc/tor/torrc
-fi
-if [ -n "$HiddenServiceDir" ]; then
-  echo "HiddenServiceDir $HiddenServiceDir" >> /etc/tor/torrc
-fi
-if [ -n "$HiddenServicePort" ]; then
-  echo "HiddenServicePort $HiddenServicePort" >> /etc/tor/torrc
-fi
-if [ -n "$ExitNodes" ]; then
-  echo " ExitNodes  $ExitNodes" >> /etc/tor/torrc
-fi
+append_config "DataDirectory /tor"
+append_if_set "ContactInfo" "$ContactInfo"
+append_if_set "Nickname" "$Nickname"
 
-#Startup
+case "$mode" in
+  exit)
+    echo "Starting up as exit node"
+    require_env "ORPort" "$ORPort"
+    append_config "ORPort 0.0.0.0:$ORPort"
+    append_config "ExitRelay 1"
+    append_config "SocksPort 0"
+    if [ -n "$DirPort" ]; then
+      append_config "DirPort 0.0.0.0:$DirPort"
+    fi
+    append_if_set "DirPortFrontPage" "$DirPortFrontPage"
+    ;;
+  middle)
+    echo "Starting up as middle / guard node"
+    require_env "ORPort" "$ORPort"
+    append_config "ORPort 0.0.0.0:$ORPort"
+    append_config "ExitRelay 0"
+    append_config "SocksPort 0"
+    ;;
+  bridge)
+    echo "Starting up as bridge node"
+    require_env "ORPort" "$ORPort"
+    require_env "TransportPort or PTPort" "$transport_port"
+    append_config "ORPort 0.0.0.0:$ORPort"
+    append_config "BridgeRelay 1"
+    append_config "SocksPort 0"
+    append_config "ServerTransportPlugin obfs4 exec /usr/bin/lyrebird"
+    append_config "ServerTransportListenAddr obfs4 0.0.0.0:$transport_port"
+    append_config "ExtORPort auto"
+    if [ -n "$MyFamily" ]; then
+      echo "Ignoring MyFamily for bridge mode, as Tor bridges should not publish a family."
+    fi
+    ;;
+  proxy)
+    echo "Starting up as proxy"
+    require_env "SOCKSPort" "$SOCKSPort"
+    append_config "SocksPort 0.0.0.0:$SOCKSPort"
+    ;;
+  *)
+    echo "No valid mode set. Please refer to the README.md on how to run this image."
+    exit 1
+    ;;
+esac
+
+append_if_set "DNSPort" "$DNSPort"
+append_if_set "DNSListenAddress" "$DNSListenAddress"
+if [ "$mode" != "bridge" ]; then
+  append_if_set "MyFamily" "$MyFamily"
+fi
+append_if_set "HiddenServiceDir" "$HiddenServiceDir"
+append_if_set "HiddenServicePort" "$HiddenServicePort"
+append_if_set "ExitNodes" "$ExitNodes"
+append_if_set "ReducedExitPolicy" "$ReducedExitPolicy"
+append_if_set "ExitPolicy" "$ExitPolicy"
+append_if_set "PublishServerDescriptor" "$PublishServerDescriptor"
+append_if_set "Address" "$Address"
+
 echo "Running tor -f /etc/tor/torrc"
-tor -f /etc/tor/torrc
+exec tor -f /etc/tor/torrc
